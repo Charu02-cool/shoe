@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reviews — FitonFeet</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-logo">
+    <a href="index.html"><span class="logo-flip">Flip</span><span class="logo-kart">kart</span></a>
+    <span class="logo-tagline"><i>Explore <span>Plus</span></i> <i class="fa fa-star" style="color:#ffe500;font-size:10px"></i></span>
+  </div>
+  <div class="nav-search">
+    <input type="text" placeholder="Search for shoes, brands and more" id="searchInput"/>
+    <button onclick="searchProducts()"><i class="fa fa-search"></i></button>
+  </div>
+  <div class="nav-links">
+    <a href="index.html"><i class="fa fa-home"></i> Home</a>
+    <a href="products.html"><i class="fa fa-shoe-prints"></i> Products</a>
+    <a href="featured.html"><i class="fa fa-star"></i> Featured</a>
+    <a href="review.html" class="active"><i class="fa fa-comment"></i> Reviews</a>
+    <a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart <span class="cart-badge" id="cartCount">0</span></a>
+  </div>
+</nav>
+
+<div class="page-hero" style="background:linear-gradient(135deg,#26a541,#1a7a30)">
+  <h1><i class="fa fa-star"></i> Customer Reviews</h1>
+  <p>Real reviews from real buyers across India</p>
+</div>
+
+<div class="review-page">
+  <!-- OVERALL RATING SUMMARY -->
+  <div style="background:#fff;border-radius:12px;padding:28px;margin-bottom:28px;display:flex;gap:48px;align-items:center;box-shadow:0 2px 8px rgba(0,0,0,0.08)">
+    <div style="text-align:center">
+      <div style="font-size:64px;font-weight:900;color:#2874f0;line-height:1">4.4</div>
+      <div style="color:#ff9f00;font-size:22px;margin:6px 0"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-half-alt"></i></div>
+      <p style="color:#878787;font-size:13px">Based on 38,200+ reviews</p>
+    </div>
+    <div style="flex:1">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <span style="font-size:12px;width:24px">5 ★</span>
+        <div style="flex:1;height:8px;background:#f0f0f0;border-radius:4px;overflow:hidden"><div style="width:62%;height:100%;background:#26a541;border-radius:4px"></div></div>
+        <span style="font-size:12px;color:#878787">62%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <span style="font-size:12px;width:24px">4 ★</span>
+        <div style="flex:1;height:8px;background:#f0f0f0;border-radius:4px;overflow:hidden"><div style="width:22%;height:100%;background:#26a541;border-radius:4px"></div></div>
+        <span style="font-size:12px;color:#878787">22%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <span style="font-size:12px;width:24px">3 ★</span>
+        <div style="flex:1;height:8px;background:#f0f0f0;border-radius:4px;overflow:hidden"><div style="width:9%;height:100%;background:#ff9f00;border-radius:4px"></div></div>
+        <span style="font-size:12px;color:#878787">9%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <span style="font-size:12px;width:24px">2 ★</span>
+        <div style="flex:1;height:8px;background:#f0f0f0;border-radius:4px;overflow:hidden"><div style="width:4%;height:100%;background:#ff6161;border-radius:4px"></div></div>
+        <span style="font-size:12px;color:#878787">4%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:12px;width:24px">1 ★</span>
+        <div style="flex:1;height:8px;background:#f0f0f0;border-radius:4px;overflow:hidden"><div style="width:3%;height:100%;background:#ff6161;border-radius:4px"></div></div>
+        <span style="font-size:12px;color:#878787">3%</span>
+      </div>
+    </div>
+    <div style="text-align:center">
+      <p style="font-size:13px;color:#555;margin-bottom:12px;font-weight:600">Write a Review</p>
+      <button onclick="document.getElementById('reviewFormSection').scrollIntoView({behavior:'smooth'})" class="btn-primary"><i class="fa fa-pen"></i> Add Review</button>
+    </div>
+  </div>
+
+  <!-- REVIEWS GRID -->
+  <div class="section-header">
+    <h2 class="section-title">Customer <span>Reviews</span></h2>
+    <select class="sort-select" onchange="sortReviews(this.value)">
+      <option value="recent">Most Recent</option>
+      <option value="helpful">Most Helpful</option>
+      <option value="high">Highest Rating</option>
+      <option value="low">Lowest Rating</option>
+    </select>
+  </div>
+  <div class="reviews-grid" id="reviewsGrid"></div>
+
+  <!-- WRITE REVIEW FORM -->
+  <section id="reviewFormSection" style="background:#fff;border-radius:12px;padding:28px;margin-top:28px;box-shadow:0 2px 8px rgba(0,0,0,0.08)">
+    <h3 style="font-size:20px;font-weight:700;margin-bottom:20px"><i class="fa fa-pen" style="color:#2874f0"></i> Write Your Review</h3>
+    <div style="margin-bottom:16px">
+      <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px">Select Product</label>
+      <select id="reviewProduct" style="width:100%;padding:10px;border:1px solid #e0e0e0;border-radius:6px;font-family:inherit;font-size:14px">
+        <option value="">-- Select a product --</option>
+      </select>
+    </div>
+    <div style="margin-bottom:16px">
+      <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px">Your Rating</label>
+      <div id="starRating" style="display:flex;gap:6px;font-size:28px;cursor:pointer">
+        <i class="far fa-star" data-val="1" onclick="setRating(1)" onmouseover="hoverRating(1)" onmouseout="resetHover()"></i>
+        <i class="far fa-star" data-val="2" onclick="setRating(2)" onmouseover="hoverRating(2)" onmouseout="resetHover()"></i>
+        <i class="far fa-star" data-val="3" onclick="setRating(3)" onmouseover="hoverRating(3)" onmouseout="resetHover()"></i>
+        <i class="far fa-star" data-val="4" onclick="setRating(4)" onmouseover="hoverRating(4)" onmouseout="resetHover()"></i>
+        <i class="far fa-star" data-val="5" onclick="setRating(5)" onmouseover="hoverRating(5)" onmouseout="resetHover()"></i>
+      </div>
+    </div>
+    <div style="margin-bottom:16px">
+      <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px">Your Name</label>
+      <input type="text" id="reviewName" placeholder="Enter your name" style="width:100%;padding:10px;border:1px solid #e0e0e0;border-radius:6px;font-family:inherit;font-size:14px"/>
+    </div>
+    <div style="margin-bottom:20px">
+      <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px">Your Review</label>
+      <textarea id="reviewText" rows="4" placeholder="Share your experience with this product..." style="width:100%;padding:10px;border:1px solid #e0e0e0;border-radius:6px;font-family:inherit;font-size:14px;resize:vertical"></textarea>
+    </div>
+    <button class="btn-primary" onclick="submitReview()" style="padding:12px 32px"><i class="fa fa-paper-plane"></i> Submit Review</button>
+  </section>
+</div>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-col"><h3><span class="logo-flip">Flip</span><span class="logo-kart">kart</span> Shoes</h3><p>India's favourite destination for branded footwear.</p></div>
+    <div class="footer-col"><h4>Quick Links</h4><a href="index.html">Home</a><a href="products.html">Products</a><a href="featured.html">Featured</a><a href="review.html">Reviews</a></div>
+    <div class="footer-col"><h4>Support</h4><a href="#">Help Center</a><a href="#">Track Order</a></div>
+    <div class="footer-col"><h4>Contact</h4><p><i class="fa fa-phone"></i> 1800-202-9898</p></div>
+  </div>
+  <div class="footer-bottom"><p>© 2026 FitonFeet. All rights reserved.</p></div>
+</footer>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+<script>
+const SAMPLE_REVIEWS = [
+  { name:"Rahul M.", product:"Nike Air Max 270", rating:5, text:"Absolutely love these shoes! Super comfortable for long walks. The cushioning is amazing. Delivery was super fast too.", date:"2 days ago", verified:true },
+  { name:"Priya S.", product:"Adidas Ultraboost 22", rating:5, text:"Best running shoes I've ever bought! The boost foam is incredibly responsive. Worth every rupee.", date:"1 week ago", verified:true },
+  { name:"Amit K.", product:"Converse Chuck Taylor", rating:4, text:"Classic style, pairs well with everything. Comfortable for daily wear. Only minor thing is that it runs slightly large.", date:"3 days ago", verified:true },
+  { name:"Sneha R.", product:"Nike Air Force 1", rating:5, text:"Iconic silhouette, premium quality. I get compliments every time I wear these. FitonFeet divered in 1 day!", date:"5 days ago", verified:true },
+  { name:"Vikram T.", product:"Vans Old Skool", rating:4, text:"Great for skating and casual use. The sole is grippy and durable. Highly recommend!", date:"1 week ago", verified:false },
+  { name:"Deepika N.", product:"Puma RS-X3", rating:4, text:"Love the chunky retro look. Very comfortable for all-day wear. Colors are exactly as shown in photos.", date:"2 weeks ago", verified:true },
+  { name:"Arjun P.", product:"New Balance 990v5", rating:5, text:"Premium quality, made in USA! Heavy but extremely comfortable. Best investment in footwear I've made.", date:"3 weeks ago", verified:true },
+  { name:"Kavya L.", product:"Reebok Classic Leather", rating:4, text:"Timeless design, goes with everything. The leather is soft and breaks in nicely. Good value for money.", date:"1 month ago", verified:true },
+  { name:"Rohit B.", product:"Skechers D'Lites", rating:3, text:"Comfortable for daily wear but the platform looks a bit odd for some outfits. Memory foam is very soft though.", date:"1 month ago", verified:false },
+  { name:"Meera G.", product:"Adidas Stan Smith", rating:5, text:"Perfect minimalist sneaker! Clean white leather, versatile styling. Good for both smart casual and sporty looks.", date:"2 months ago", verified:true },
+  { name:"Suresh V.", product:"Nike React Infinity", rating:5, text:"Reduced my knee pain significantly! The extra cushioning and wide base really helps on long runs. Highly recommended for injury-prone runners.", date:"2 months ago", verified:true },
+  { name:"Ananya D.", product:"Bata Comfit Oxford", rating:4, text:"Great formal shoe at an affordable price. Comfortable enough for 8-hour office days. Leather quality is impressive.", date:"2 months ago", verified:true },
+];
+
+let userReviews = JSON.parse(localStorage.getItem('userReviews') || '[]');
+let selectedRating = 0;
+let allReviews = [...userReviews, ...SAMPLE_REVIEWS];
+
+function renderReviews(reviews) {
+  document.getElementById('reviewsGrid').innerHTML = reviews.map(r => `
+    <div class="review-card">
+      <div class="reviewer-info">
+        <div class="reviewer-avatar">${r.name[0]}</div>
+        <div>
+          <div class="reviewer-name">${r.name}</div>
+          <div class="review-date">${r.date}</div>
+        </div>
+      </div>
+      <div class="review-product"><i class="fa fa-shoe-prints"></i> ${r.product}</div>
+      <div class="product-rating" style="margin-bottom:8px">${renderStars(r.rating)}</div>
+      <p class="review-text">${r.text}</p>
+      ${r.verified ? '<div class="review-verified"><i class="fa fa-check-circle"></i> Verified Purchase</div>' : ''}
+    </div>
+  `).join('');
+}
+
+function sortReviews(by) {
+  let sorted = [...allReviews];
+  if (by === 'high') sorted.sort((a,b) => b.rating - a.rating);
+  else if (by === 'low') sorted.sort((a,b) => a.rating - b.rating);
+  renderReviews(sorted);
+}
+
+// Populate product dropdown
+const sel = document.getElementById('reviewProduct');
+PRODUCTS.forEach(p => {
+  const opt = document.createElement('option');
+  opt.value = p.name;
+  opt.textContent = p.name;
+  sel.appendChild(opt);
+});
+
+// Star rating interaction
+function setRating(v) {
+  selectedRating = v;
+  updateStars(v);
+}
+function hoverRating(v) { updateStars(v); }
+function resetHover() { updateStars(selectedRating); }
+function updateStars(v) {
+  document.querySelectorAll('#starRating i').forEach((s,i) => {
+    s.className = i < v ? 'fa fa-star' : 'far fa-star';
+    s.style.color = i < v ? '#ff9f00' : '#ccc';
+  });
+}
+
+function submitReview() {
+  const product = document.getElementById('reviewProduct').value;
+  const name = document.getElementById('reviewName').value.trim();
+  const text = document.getElementById('reviewText').value.trim();
+  if (!product || !name || !text || !selectedRating) {
+    alert('Please fill all fields and select a rating!');
+    return;
+  }
+  const review = { name, product, rating: selectedRating, text, date: 'Just now', verified: false };
+  userReviews.unshift(review);
+  localStorage.setItem('userReviews', JSON.stringify(userReviews));
+  allReviews = [...userReviews, ...SAMPLE_REVIEWS];
+  renderReviews(allReviews);
+  // Reset form
+  document.getElementById('reviewProduct').value = '';
+  document.getElementById('reviewName').value = '';
+  document.getElementById('reviewText').value = '';
+  selectedRating = 0;
+  updateStars(0);
+  showToast('✅ Your review has been submitted! Thank you.');
+}
+
+function searchProducts() {
+  const q = document.getElementById('searchInput').value.trim();
+  if (q) window.location.href = `products.html?search=${encodeURIComponent(q)}`;
+}
+document.getElementById('searchInput').addEventListener('keypress', e => { if(e.key==='Enter') searchProducts(); });
+
+renderReviews(allReviews);
+</script>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Featured — FitonFeet</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-logo">
+    <a href="index.html"><span class="logo-flip">Flip</span><span class="logo-kart">kart</span></a>
+    <span class="logo-tagline"><i>Explore <span>Plus</span></i> <i class="fa fa-star" style="color:#ffe500;font-size:10px"></i></span>
+  </div>
+  <div class="nav-search">
+    <input type="text" placeholder="Search for shoes, brands and more" id="searchInput"/>
+    <button onclick="searchProducts()"><i class="fa fa-search"></i></button>
+  </div>
+  <div class="nav-links">
+    <a href="index.html"><i class="fa fa-home"></i> Home</a>
+    <a href="products.html"><i class="fa fa-shoe-prints"></i> Products</a>
+    <a href="featured.html" class="active"><i class="fa fa-star"></i> Featured</a>
+    <a href="review.html"><i class="fa fa-comment"></i> Reviews</a>
+    <a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart <span class="cart-badge" id="cartCount">0</span></a>
+  </div>
+</nav>
+
+<div class="page-hero" style="background: linear-gradient(135deg,#ff6b00,#ff9f00)">
+  <h1><i class="fa fa-star"></i> Featured Products</h1>
+  <p>Hand-picked top sellers and editor's choice</p>
+</div>
+
+<section style="padding: 28px 48px; background: #f1f3f6;">
+
+  <!-- DEAL OF THE DAY BANNER -->
+  <div style="background: linear-gradient(135deg,#2874f0,#0052cc); border-radius: 12px; padding: 28px 36px; margin-bottom: 28px; display: flex; align-items: center; justify-content: space-between; color:#fff;">
+    <div>
+      <p style="color:#ff9f00;font-weight:700;text-transform:uppercase;font-size:12px;letter-spacing:1px;margin-bottom:6px">🔥 Deal of the Day</p>
+      <h2 style="font-size:28px;font-weight:800;margin-bottom:8px">Nike Air Force 1</h2>
+      <p style="opacity:0.8;margin-bottom:16px">Only ₹7,999 — Save ₹4,000 today only!</p>
+      <div style="display:flex;gap:12px">
+        <button class="btn-cart" onclick="addToCart(7,'UK 9')" style="border:none;border-radius:4px;padding:11px 24px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;background:#ff9f00;color:#000"><i class="fa fa-shopping-cart"></i> Add to Cart</button>
+        <button style="background:rgba(255,255,255,0.2);color:#fff;border:2px solid rgba(255,255,255,0.5);border-radius:4px;padding:11px 24px;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer" onclick="openARModal('Nike Air Force 1','https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb?w=400')"><i class="fa fa-vr-cardboard"></i> AR Try-On</button>
+      </div>
+    </div>
+    <img src="https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb?w=280&q=80" alt="Air Force 1" style="width:260px;border-radius:12px;box-shadow:0 16px 40px rgba(0,0,0,0.3)"/>
+  </div>
+
+  <!-- FEATURED GRID -->
+  <div class="section-header">
+    <h2 class="section-title">Editor's <span>Picks</span></h2>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;margin-bottom:32px" id="featuredGrid"></div>
+
+  <!-- BEST SELLERS -->
+  <div class="section-header" style="margin-top:24px">
+    <h2 class="section-title">Best <span>Sellers</span></h2>
+  </div>
+  <div class="featured-list" id="bestSellersList"></div>
+</section>
+
+<!-- AR MODAL -->
+<div id="arModal" class="ar-modal">
+  <div class="ar-modal-content">
+    <button class="ar-modal-close" onclick="closeARModal()"><i class="fa fa-times"></i></button>
+    <h2><i class="fa fa-vr-cardboard"></i> AR Foot Try-On</h2>
+    <p class="ar-subtitle">Trying on: <strong id="arProductName"></strong></p>
+    <div class="ar-tabs">
+      <button class="ar-tab active" onclick="switchTab('camera')"><i class="fa fa-camera"></i> Live Camera</button>
+      <button class="ar-tab" onclick="switchTab('upload')"><i class="fa fa-upload"></i> Upload Photo</button>
+    </div>
+    <div id="cameraTab" class="ar-tab-content active">
+      <div class="ar-video-wrap">
+        <video id="arVideo" autoplay playsinline></video>
+        <canvas id="arCanvas"></canvas>
+        <div class="ar-shoe-overlay"><img id="arShoeImg" src="" alt="shoe"/></div>
+        <div class="ar-scan-line"></div>
+        <div class="ar-corner tl"></div><div class="ar-corner tr"></div>
+        <div class="ar-corner bl"></div><div class="ar-corner br"></div>
+      </div>
+      <p class="ar-instruction"><i class="fa fa-info-circle"></i> Place foot flat and point camera down</p>
+      <button class="btn-primary full-width" id="startCameraBtn" onclick="startCamera()"><i class="fa fa-video"></i> Start Camera</button>
+      <button class="btn-primary full-width" id="captureBtn" onclick="captureFoot()" style="display:none;background:var(--flip-yellow);color:#000"><i class="fa fa-crosshairs"></i> Capture & Measure</button>
+    </div>
+    <div id="uploadTab" class="ar-tab-content">
+      <div class="upload-zone" onclick="document.getElementById('footPhoto').click()">
+        <i class="fa fa-cloud-upload-alt"></i>
+        <p>Upload your foot photo</p>
+        <small>Place foot on white paper</small>
+      </div>
+      <input type="file" id="footPhoto" accept="image/*" onchange="analyzeFootPhoto(event)" style="display:none"/>
+      <div id="uploadPreview" class="upload-preview" style="display:none"><img id="uploadedFoot" src="" alt=""/></div>
+    </div>
+    <div id="arResult" class="ar-result" style="display:none">
+      <div class="result-card">
+        <div class="result-icon">✅</div>
+        <h3>Your Foot Size</h3>
+        <div class="size-display" id="sizeDisplay">UK 9</div>
+        <div class="size-details" id="sizeDetails"></div>
+        <div class="size-recommendation">
+          <p>📦 Recommended for <strong id="recProductName"></strong>:</p>
+          <div class="size-options">
+            <span class="size-opt selected" id="recSize">UK 9</span>
+            <span class="size-opt" id="recSizeHalf">UK 9.5</span>
+          </div>
+        </div>
+        <button class="btn-primary full-width" onclick="addToCartFromAR()"><i class="fa fa-shopping-cart"></i> Add to Cart (Size <span id="cartSize">UK 9</span>)</button>
+        <button class="btn-secondary full-width" onclick="retryAR()"><i class="fa fa-redo"></i> Try Again</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-col"><h3><span class="logo-flip">Flip</span><span class="logo-kart">kart</span> Shoes</h3><p>India's favourite destination for branded footwear.</p></div>
+    <div class="footer-col"><h4>Quick Links</h4><a href="index.html">Home</a><a href="products.html">Products</a><a href="featured.html">Featured</a><a href="review.html">Reviews</a></div>
+    <div class="footer-col"><h4>Support</h4><a href="#">Help Center</a><a href="#">Track Order</a></div>
+    <div class="footer-col"><h4>Contact</h4><p><i class="fa fa-phone"></i> 1800-202-9898</p></div>
+  </div>
+  <div class="footer-bottom"><p>© 2026 FitonFeet. All rights reserved.</p></div>
+</footer>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+<script>
+function searchProducts() {
+  const q = document.getElementById('searchInput').value.trim();
+  if (q) window.location.href = `products.html?search=${encodeURIComponent(q)}`;
+}
+document.getElementById('searchInput').addEventListener('keypress', e => { if(e.key==='Enter') searchProducts(); });
+
+// Render featured grid
+const featured = PRODUCTS.filter(p => p.featured);
+document.getElementById('featuredGrid').innerHTML = featured.map(p => productCard(p)).join('');
+
+// Best sellers = sorted by reviews
+const bestSellers = [...PRODUCTS].sort((a,b) => b.reviews - a.reviews).slice(0,4);
+document.getElementById('bestSellersList').innerHTML = bestSellers.map(p => featuredCard(p)).join('');
+</script>
+</body>
+</html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Products — FitonFeet</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-logo">
+    <a href="index.html"><span class="logo-flip">Flip</span><span class="logo-kart">kart</span></a>
+    <span class="logo-tagline"><i>Explore <span>Plus</span></i> <i class="fa fa-star" style="color:#ffe500;font-size:10px"></i></span>
+  </div>
+  <div class="nav-search">
+    <input type="text" placeholder="Search for shoes, brands and more" id="searchInput"/>
+    <button onclick="searchProducts()"><i class="fa fa-search"></i></button>
+  </div>
+  <div class="nav-links">
+    <a href="index.html"><i class="fa fa-home"></i> Home</a>
+    <a href="products.html" class="active"><i class="fa fa-shoe-prints"></i> Products</a>
+    <a href="featured.html"><i class="fa fa-star"></i> Featured</a>
+    <a href="review.html"><i class="fa fa-comment"></i> Reviews</a>
+    <a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart <span class="cart-badge" id="cartCount">0</span></a>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <h1><i class="fa fa-shoe-prints"></i> All Products</h1>
+  <p>Explore our wide collection of premium footwear</p>
+</div>
+
+<div class="products-page">
+  <!-- SIDEBAR FILTERS -->
+  <aside class="filter-sidebar">
+    <h3><i class="fa fa-filter"></i> Filters</h3>
+    
+    <div class="filter-group">
+      <h4>Category</h4>
+      <label class="filter-option"><input type="checkbox" name="cat" value="running" onchange="applyFilters()"/> Running</label>
+      <label class="filter-option"><input type="checkbox" name="cat" value="casual" onchange="applyFilters()"/> Casual</label>
+      <label class="filter-option"><input type="checkbox" name="cat" value="sports" onchange="applyFilters()"/> Sports</label>
+      <label class="filter-option"><input type="checkbox" name="cat" value="formal" onchange="applyFilters()"/> Formal</label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Brand</h4>
+      <label class="filter-option"><input type="checkbox" name="brand" value="Nike" onchange="applyFilters()"/> Nike</label>
+      <label class="filter-option"><input type="checkbox" name="brand" value="Adidas" onchange="applyFilters()"/> Adidas</label>
+      <label class="filter-option"><input type="checkbox" name="brand" value="Puma" onchange="applyFilters()"/> Puma</label>
+      <label class="filter-option"><input type="checkbox" name="brand" value="New Balance" onchange="applyFilters()"/> New Balance</label>
+      <label class="filter-option"><input type="checkbox" name="brand" value="Reebok" onchange="applyFilters()"/> Reebok</label>
+      <label class="filter-option"><input type="checkbox" name="brand" value="Converse" onchange="applyFilters()"/> Converse</label>
+      <label class="filter-option"><input type="checkbox" name="brand" value="Vans" onchange="applyFilters()"/> Vans</label>
+      <label class="filter-option"><input type="checkbox" name="brand" value="Skechers" onchange="applyFilters()"/> Skechers</label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Price Range</h4>
+      <label class="filter-option"><input type="radio" name="price" value="0-5000" onchange="applyFilters()"/> Under ₹5,000</label>
+      <label class="filter-option"><input type="radio" name="price" value="5000-10000" onchange="applyFilters()"/> ₹5,000 – ₹10,000</label>
+      <label class="filter-option"><input type="radio" name="price" value="10000-20000" onchange="applyFilters()"/> ₹10,000 – ₹20,000</label>
+      <label class="filter-option"><input type="radio" name="price" value="0-999999" onchange="applyFilters()"/> All Prices</label>
+    </div>
+
+    <div class="filter-group">
+      <h4>Rating</h4>
+      <label class="filter-option"><input type="radio" name="rating" value="4" onchange="applyFilters()"/> 4★ & above</label>
+      <label class="filter-option"><input type="radio" name="rating" value="3" onchange="applyFilters()"/> 3★ & above</label>
+      <label class="filter-option"><input type="radio" name="rating" value="0" onchange="applyFilters()"/> All</label>
+    </div>
+
+    <button onclick="clearFilters()" class="btn-secondary full-width" style="margin-top:8px">
+      <i class="fa fa-times"></i> Clear All Filters
+    </button>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="filter-main">
+    <div class="products-header">
+      <p class="products-count" id="productsCount">Showing 12 products</p>
+      <select class="sort-select" onchange="applyFilters()">
+        <option value="relevance">Sort by: Relevance</option>
+        <option value="price-low">Price: Low to High</option>
+        <option value="price-high">Price: High to Low</option>
+        <option value="rating">Customer Rating</option>
+        <option value="discount">Discount</option>
+      </select>
+    </div>
+    <div class="products-grid" id="productsGrid"></div>
+  </main>
+</div>
+
+<!-- AR MODAL (same as index) -->
+<div id="arModal" class="ar-modal">
+  <div class="ar-modal-content">
+    <button class="ar-modal-close" onclick="closeARModal()"><i class="fa fa-times"></i></button>
+    <h2><i class="fa fa-vr-cardboard"></i> AR Foot Try-On</h2>
+    <p class="ar-subtitle">Trying on: <strong id="arProductName"></strong></p>
+    <div class="ar-tabs">
+      <button class="ar-tab active" onclick="switchTab('camera')"><i class="fa fa-camera"></i> Live Camera</button>
+      <button class="ar-tab" onclick="switchTab('upload')"><i class="fa fa-upload"></i> Upload Photo</button>
+    </div>
+    <div id="cameraTab" class="ar-tab-content active">
+      <div class="ar-video-wrap">
+        <video id="arVideo" autoplay playsinline></video>
+        <canvas id="arCanvas"></canvas>
+        <div class="ar-shoe-overlay"><img id="arShoeImg" src="" alt="shoe"/></div>
+        <div class="ar-scan-line"></div>
+        <div class="ar-corner tl"></div><div class="ar-corner tr"></div>
+        <div class="ar-corner bl"></div><div class="ar-corner br"></div>
+      </div>
+      <p class="ar-instruction"><i class="fa fa-info-circle"></i> Place your foot flat on floor and point camera down</p>
+      <button class="btn-primary full-width" id="startCameraBtn" onclick="startCamera()"><i class="fa fa-video"></i> Start Camera</button>
+      <button class="btn-capture full-width" id="captureBtn" onclick="captureFoot()" style="display:none;background:var(--flip-yellow);color:#000;border:none;border-radius:4px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;padding:9px;width:100%;margin-top:10px;display:none"><i class="fa fa-crosshairs"></i> Capture & Measure</button>
+    </div>
+    <div id="uploadTab" class="ar-tab-content">
+      <div class="upload-zone" onclick="document.getElementById('footPhoto').click()">
+        <i class="fa fa-cloud-upload-alt"></i>
+        <p>Click to upload your foot photo</p>
+        <small>Place foot on white paper for accuracy</small>
+      </div>
+      <input type="file" id="footPhoto" accept="image/*" onchange="analyzeFootPhoto(event)" style="display:none"/>
+      <div id="uploadPreview" class="upload-preview" style="display:none">
+        <img id="uploadedFoot" src="" alt="foot"/>
+      </div>
+    </div>
+    <div id="arResult" class="ar-result" style="display:none">
+      <div class="result-card">
+        <div class="result-icon">✅</div>
+        <h3>Your Foot Size</h3>
+        <div class="size-display" id="sizeDisplay">UK 9</div>
+        <div class="size-details" id="sizeDetails"></div>
+        <div class="size-recommendation">
+          <p>📦 Recommended for <strong id="recProductName"></strong>:</p>
+          <div class="size-options">
+            <span class="size-opt selected" id="recSize">UK 9</span>
+            <span class="size-opt" id="recSizeHalf">UK 9.5</span>
+          </div>
+        </div>
+        <button class="btn-primary full-width" onclick="addToCartFromAR()"><i class="fa fa-shopping-cart"></i> Add to Cart (Size <span id="cartSize">UK 9</span>)</button>
+        <button class="btn-secondary full-width" onclick="retryAR()"><i class="fa fa-redo"></i> Try Again</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-col">
+      <h3><span class="logo-flip">Flip</span><span class="logo-kart">kart</span> Shoes</h3>
+      <p>India's favourite destination for branded footwear.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <a href="index.html">Home</a><a href="products.html">Products</a>
+      <a href="featured.html">Featured</a><a href="review.html">Reviews</a>
+    </div>
+    <div class="footer-col"><h4>Support</h4><a href="#">Help Center</a><a href="#">Track Order</a></div>
+    <div class="footer-col"><h4>Contact</h4><p><i class="fa fa-phone"></i> 1800-202-9898</p></div>
+  </div>
+  <div class="footer-bottom"><p>© 2026 FitonFeet. All rights reserved.</p></div>
+</footer>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+<script>
+function applyFilters() {
+  const cats = [...document.querySelectorAll('input[name="cat"]:checked')].map(i => i.value);
+  const brands = [...document.querySelectorAll('input[name="brand"]:checked')].map(i => i.value);
+  const priceRange = document.querySelector('input[name="price"]:checked')?.value;
+  const ratingMin = parseFloat(document.querySelector('input[name="rating"]:checked')?.value || 0);
+  const sort = document.querySelector('.sort-select').value;
+  const search = new URLSearchParams(window.location.search).get('search')?.toLowerCase() || '';
+
+  let filtered = PRODUCTS.filter(p => {
+    if (cats.length && !cats.includes(p.category)) return false;
+    if (brands.length && !brands.includes(p.brand)) return false;
+    if (priceRange && priceRange !== '0-999999') {
+      const [min, max] = priceRange.split('-').map(Number);
+      if (p.price < min || p.price > max) return false;
+    }
+    if (p.rating < ratingMin) return false;
+    if (search && !p.name.toLowerCase().includes(search) && !p.brand.toLowerCase().includes(search)) return false;
+    return true;
+  });
+
+  if (sort === 'price-low') filtered.sort((a,b) => a.price - b.price);
+  else if (sort === 'price-high') filtered.sort((a,b) => b.price - a.price);
+  else if (sort === 'rating') filtered.sort((a,b) => b.rating - a.rating);
+  else if (sort === 'discount') filtered.sort((a,b) => (b.oldPrice-b.price)/b.oldPrice - (a.oldPrice-a.price)/a.oldPrice);
+
+  document.getElementById('productsCount').textContent = `Showing ${filtered.length} products`;
+  document.getElementById('productsGrid').innerHTML = filtered.map(p => productCard(p)).join('') || '<p style="padding:40px;text-align:center;color:#888">No products found. Try different filters.</p>';
+}
+
+function clearFilters() {
+  document.querySelectorAll('input[name="cat"], input[name="brand"], input[name="price"], input[name="rating"]').forEach(i => i.checked = false);
+  applyFilters();
+}
+
+function searchProducts() {
+  const q = document.getElementById('searchInput').value.trim();
+  if (q) window.location.href = `products.html?search=${encodeURIComponent(q)}`;
+}
+document.getElementById('searchInput').addEventListener('keypress', e => { if(e.key==='Enter') searchProducts(); });
+
+// Pre-fill search from URL
+const urlSearch = new URLSearchParams(window.location.search).get('search');
+if (urlSearch) document.getElementById('searchInput').value = urlSearch;
+
+// Check URL for category filter
+const urlCat = new URLSearchParams(window.location.search).get('cat');
+if (urlCat) {
+  const cb = document.querySelector(`input[name="cat"][value="${urlCat}"]`);
+  if (cb) cb.checked = true;
+}
+
+applyFilters();
+</script>
+</body>
+</html>
