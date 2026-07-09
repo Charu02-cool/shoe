@@ -151,3 +151,4 @@ function formatPrice(p) {
 }
 
 document.addEventListener('DOMContentLoaded', () => updateCartBadge());
+, () => updateCartBadge());
