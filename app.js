@@ -138,6 +138,108 @@ function switchTab(tab) {
   if (tab !== 'camera') stopCamera();
 }
 
+// ===== FEET-ONLY DETECTION GUARD (real ML models) =====
+// Uses Google's MediaPipe Tasks-Vision models, loaded from CDN at runtime:
+//  - BlazeFace short-range model -> actual face detection
+//  - HandLandmarker model        -> actual hand detection (21 landmarks)
+// Both run locally in the browser (WASM/GPU), nothing is uploaded anywhere.
+// Only when NEITHER a face NOR a hand is found is the frame treated as "feet"
+// and the Capture button gets enabled.
+let arDetectTimer = null;
+let arFaceDetector = null;
+let arHandLandmarker = null;
+let arModelsLoading = false;
+let arModelsReady = false;
+
+async function loadDetectionModels() {
+  if (arModelsReady || arModelsLoading) return;
+  arModelsLoading = true;
+  setDetectStatus('none', 'Loading detection models…');
+  try {
+    const vision = await import('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs');
+    const filesetResolver = await vision.FilesetResolver.forVisionTasks(
+      'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm'
+    );
+
+    arFaceDetector = await vision.FaceDetector.createFromOptions(filesetResolver, {
+      baseOptions: {
+        modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_short_range/float16/1/blaze_face_short_range.tflite'
+      },
+      runningMode: 'VIDEO'
+    });
+
+    arHandLandmarker = await vision.HandLandmarker.createFromOptions(filesetResolver, {
+      baseOptions: {
+        modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task'
+      },
+      runningMode: 'VIDEO',
+      numHands: 2
+    });
+
+    arModelsReady = true;
+    setDetectStatus('none', 'Feet not detected');
+  } catch (e) {
+    console.error('Failed to load detection models', e);
+    setDetectStatus('blocked', 'Could not load detection models — check your internet connection');
+  } finally {
+    arModelsLoading = false;
+  }
+}
+
+function setDetectStatus(state, text) {
+  const box = document.getElementById('arDetectStatus');
+  const label = document.getElementById('arDetectStatusText');
+  const captureBtn = document.getElementById('captureBtn');
+  if (!box || !label) return;
+  box.style.display = 'flex';
+  box.classList.remove('ar-detect-none', 'ar-detect-blocked', 'ar-detect-ok');
+  box.classList.add('ar-detect-' + state);
+  label.textContent = text;
+  if (captureBtn) captureBtn.disabled = state !== 'ok';
+}
+
+function checkFrameForFeet() {
+  const video = document.getElementById('arVideo');
+  if (!video || !video.videoWidth) return;
+  if (!arModelsReady) { setDetectStatus('none', 'Loading detection models…'); return; }
+
+  const now = performance.now();
+
+  try {
+    const faceResult = arFaceDetector.detectForVideo(video, now);
+    if (faceResult && faceResult.detections && faceResult.detections.length > 0) {
+      setDetectStatus('blocked', 'Face detected — please point the camera at your feet only');
+      return;
+    }
+  } catch (e) { /* skip this frame */ }
+
+  try {
+    const handResult = arHandLandmarker.detectForVideo(video, now);
+    if (handResult && handResult.landmarks && handResult.landmarks.length > 0) {
+      setDetectStatus('blocked', 'Hand detected — please point the camera at your feet only');
+      return;
+    }
+  } catch (e) { /* skip this frame */ }
+
+  setDetectStatus('ok', 'Feet detected — you can capture now');
+}
+
+function startDetectLoop() {
+  stopDetectLoop();
+  setDetectStatus('none', arModelsReady ? 'Feet not detected' : 'Loading detection models…');
+  arDetectTimer = setInterval(checkFrameForFeet, 300);
+}
+
+function stopDetectLoop() {
+  if (arDetectTimer) { clearInterval(arDetectTimer); arDetectTimer = null; }
+  const box = document.getElementById('arDetectStatus');
+  if (box) box.style.display = 'none';
+}
+
+// Kick off model download as soon as the page loads so it's ready by the
+// time the user opens the camera tab.
+loadDetectionModels();
+
 async function startCamera() {
   try {
     arStream = await navigator.mediaDevices.getUserMedia({
@@ -147,13 +249,17 @@ async function startCamera() {
     video.srcObject = arStream;
     document.getElementById('startCameraBtn').style.display = 'none';
     document.getElementById('captureBtn').style.display = 'block';
+    document.getElementById('captureBtn').disabled = true;
     document.querySelector('.ar-scan-line').style.display = 'block';
+    if (!arModelsReady) await loadDetectionModels();
+    startDetectLoop();
   } catch (err) {
     alert('Camera access denied or unavailable. Please allow camera access or use "Upload Photo" instead.');
   }
 }
 
 function stopCamera() {
+  stopDetectLoop();
   if (arStream) {
     arStream.getTracks().forEach(t => t.stop());
     arStream = null;
@@ -161,6 +267,11 @@ function stopCamera() {
 }
 
 function captureFoot() {
+  const captureBtn = document.getElementById('captureBtn');
+  if (captureBtn && captureBtn.disabled) {
+    showToast('⚠️ Please show only your feet to the camera first');
+    return;
+  }
   const video = document.getElementById('arVideo');
   const canvas = document.getElementById('arCanvas');
   canvas.width = video.videoWidth || 640;
@@ -227,6 +338,7 @@ function retryAR() {
   document.getElementById('startCameraBtn').style.display = 'block';
   document.getElementById('captureBtn').style.display = 'none';
   document.getElementById('uploadPreview').style.display = 'none';
+  stopDetectLoop();
 }
 
 // Close modal on backdrop click
