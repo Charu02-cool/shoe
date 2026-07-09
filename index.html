@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>FitonFeet</title>
+  <title>Lacedup</title>
   <link rel="stylesheet" href="style.css"/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
@@ -240,10 +240,13 @@
         <div class="ar-corner br"></div>
       </div>
       <p class="ar-instruction"><i class="fa fa-info-circle"></i> Place your foot flat on floor and point camera down at it</p>
+      <div id="arDetectStatus" class="ar-detect-status ar-detect-none" style="display:none">
+        <i class="fa fa-circle-notch fa-spin"></i> <span id="arDetectStatusText">Feet not detected</span>
+      </div>
       <button class="btn-primary full-width" id="startCameraBtn" onclick="startCamera()">
         <i class="fa fa-video"></i> Start Camera
       </button>
-      <button class="btn-capture full-width" id="captureBtn" onclick="captureFoot()" style="display:none">
+      <button class="btn-capture full-width" id="captureBtn" onclick="captureFoot()" style="display:none" disabled>
         <i class="fa fa-crosshairs"></i> Capture & Measure Foot
       </button>
     </div>
