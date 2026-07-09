@@ -357,6 +357,17 @@ a { text-decoration: none; color: inherit; }
 
 .ar-instruction { color: var(--flip-gray); font-size: 13px; text-align: center; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 6px; }
 
+.ar-detect-status {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 600;
+  margin-bottom: 10px; transition: all 0.2s;
+}
+.ar-detect-status.ar-detect-none { background: #fff3cd; color: #8a6500; }
+.ar-detect-status.ar-detect-blocked { background: #fde2e2; color: #c0392b; }
+.ar-detect-status.ar-detect-ok { background: #e3f9e5; color: var(--flip-green); }
+.ar-detect-status.ar-detect-ok .fa-circle-notch { display: none; }
+.btn-capture:disabled, .btn-capture[disabled] { opacity: 0.5; cursor: not-allowed; }
+
 .upload-zone {
   border: 2px dashed #d0d0d0; border-radius: 12px;
   padding: 48px 24px; text-align: center; cursor: pointer;
